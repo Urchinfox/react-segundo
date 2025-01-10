@@ -96,7 +96,7 @@ export default function Products(){
 
     const logout = async() => {
 
-        const path = window.location.pathname.includes('/react-practice-w2/') 
+        const path = window.location.pathname.includes('/react-segundo/') 
         ? '/react-practice-w2/' : '/';
 
         document.cookie = `hexToken=; path=${path}; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
