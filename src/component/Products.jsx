@@ -95,7 +95,11 @@ export default function Products(){
     },[token])
 
     const logout = async() => {
-        document.cookie = 'hexToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+
+        const path = window.location.pathname.includes('/react-practice-w2/') 
+        ? '/react-practice-w2/' : '/';
+
+        document.cookie = `hexToken=; path=${path}; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
         navigate('/login')
     }
 
