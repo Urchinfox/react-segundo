@@ -22,7 +22,10 @@ const handleChange = (e) => {
         try {
             const res = await axios.post(`/v2/admin/signin`,loginData)
             const {token , expired} = res.data;
-            document.cookie = `hexToken=${token}; expires = ${new Date(expired)};`
+            
+            // 儲存 Cookie
+            document.cookie = `hexToken=${token}; expires=${new Date(expired)}; path=${window.location.pathname.includes('/react-segundo/') ? '/react-segundo/' : '/'};`;
+
             navigate('/products')
             console.log(res)
         } catch (error) {
