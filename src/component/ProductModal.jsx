@@ -260,6 +260,7 @@ export default function ProductModal({close,getProduct,productInfo,type}){
                         className='form-check-input'
                         onChange={handleChange}
                         value={productData.is_enabled}
+                        checked={!!productData.is_enabled}
                       />
                     </label>
                   </div>
