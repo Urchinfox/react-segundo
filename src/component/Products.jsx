@@ -12,16 +12,19 @@ export default function Products(){
     const [products,setProducts] = useState([]);
     const [type, setType] = useState();
     const deleteBtnModal = useRef(null)
+    const [pageInfo,setPageInfo] = useState();
     
     const productBtnModal = useRef(null)
 
 
 
 
-    const getProduct = async() =>{
+    const getProduct = async(page=1) =>{
       try {
-        const res = await axios.get(`/v2/api/${import.meta.env.VITE_APP_API_PATH}/admin/products`)
+        const res = await axios.get(`/v2/api/${import.meta.env.VITE_APP_API_PATH}/admin/products?page=${page}`)
         setProducts(res.data.products)
+        setPageInfo(res.data.pagination)
+        console.log(res)
       } catch (error) {
         console.log(error)
       }
@@ -63,6 +66,10 @@ export default function Products(){
 
     const closeModal = () => {
       productBtnModal.current.hide();
+    }
+
+    const handlePage = (page) =>{
+      getProduct(page)
     }
 
 
@@ -112,7 +119,8 @@ export default function Products(){
 
  
 
-       return (
+       return (<>
+
         <div className="container">
             <button type="button" className="btn btn-primary" onClick={checkLoginState}>驗證登入</button>
             <button type="button" className="btn btn-primary" onClick={logout}>登出</button>
@@ -156,7 +164,7 @@ export default function Products(){
                 </tbody>
               </table>
             </div>
-            <div className="col-md-6">
+            {/* <div className="col-md-6">
               <h2>單一產品細節</h2>
               {productDetail ? (
                 <div className="card mb-3">
@@ -189,8 +197,42 @@ export default function Products(){
               ) : (
                 <p className="text-secondary">請選擇一個商品查看</p>
               )}
-            </div>
+            </div> */}
+          </div>
+
+          <div className="d-flex">
+
+          <nav>
+          <ul className="pagination">
+            <li className="page-item" onClick={()=>handlePage(pageInfo.current_page - 1)}>
+              <a className={`page-link ${!pageInfo?.has_pre ? 'disabled': 'none'}`} >
+                上一頁
+              </a>
+            </li>
+
+
+            {Array.from({length:pageInfo?.total_pages}).map((_,index)=>{
+              return(
+
+                <li className="page-item" onClick={()=>handlePage(index+1)}> 
+                <a className={`page-link ${pageInfo.current_page === index+1 ? 'active' : 'none'}`} >
+                  {index+1}
+                </a>
+              </li>
+
+              )
+            })}
+
+
+            <li className="page-item" onClick={()=>handlePage(pageInfo.current_page+1)}>
+              <a className={`page-link ${!pageInfo?.has_next? 'disabled':'none'}`}>
+                下一頁
+              </a>
+            </li>
+          </ul>
+          </nav>
           </div>
         </div>
-      );
+
+      </>);
 }

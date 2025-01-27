@@ -88,12 +88,38 @@ export default function ProductModal({close,getProduct,productInfo,type}){
             }
         
             const res = await axios[method](api,data);
+            console.log(res);
             resetForm();
             close();
             getProduct();
         } catch (error) {
             console.log(error)
         }
+    }
+
+    const handleImgFile = async(file) =>{
+      if (!file) {
+        console.log("No files provided.");
+        return;
+      }
+  
+      const formData = new FormData();
+
+      formData.append('file-to-upload', file);
+
+      try {
+        const res = await axios.post(`${import.meta.env.VITE_APP_API_URL}/v2/api/${import.meta.env.VITE_APP_API_PATH}/admin/upload`,formData)
+        const uploadImgUrl = res.data.imageUrl;
+        console.log(uploadImgUrl);
+        
+        setProductData((prev) => ({
+          ...prev,
+          imagesUrl:[...prev.imagesUrl,uploadImgUrl]
+        }))
+      } catch (error) {
+        console.log(error)
+      }
+
     }
 
     return (
@@ -111,7 +137,7 @@ export default function ProductModal({close,getProduct,productInfo,type}){
               <div className='col-sm-4'>
                 <div className='form-group mb-2'>
                   <label className='w-100' htmlFor='image'>
-                    輸入圖片網址
+                    主圖
                     <input
                       type='text'
                       name='imageUrl'
@@ -122,16 +148,26 @@ export default function ProductModal({close,getProduct,productInfo,type}){
                       onChange={handleChange}
                     />
                   </label>
+                  <img src={productData.imageUrl} alt="" />
                 </div>
                 <div className='form-group mb-2'>
                   <label className='w-100' htmlFor='customFile'>
-                    或 上傳圖片
+                    副圖
                     <input
                       type='file'
                       id='customFile'
+                      accept=".jpg,.jpeg,.png"
                       className='form-control'
-                    />
+                      onChange={(e)=>{handleImgFile(e.target.files[0])}}
+                      />
                   </label>
+                  {
+                    productData.imageUrl && productData.imagesUrl.map(item=>{
+                      return(
+                        <img src={item} alt="..." />
+                      )
+                    })
+                  }
                 </div>
                 <img src="" alt='' className='img-fluid' />
               </div>
