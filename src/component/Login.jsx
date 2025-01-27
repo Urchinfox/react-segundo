@@ -27,7 +27,6 @@ const handleChange = (e) => {
             document.cookie = `hexToken=${token}; expires=${new Date(expired)}; path=${window.location.pathname.includes('/react-segundo/') ? '/react-segundo/' : '/'};`;
 
             navigate('/products')
-            console.log(res)
         } catch (error) {
             console.dir(error)
         }

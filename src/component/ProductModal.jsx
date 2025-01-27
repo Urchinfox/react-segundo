@@ -91,7 +91,6 @@ export default function ProductModal({close,getProduct,productInfo,type}){
             resetForm();
             close();
             getProduct();
-            console.log(res)
         } catch (error) {
             console.log(error)
         }
@@ -195,6 +194,7 @@ export default function ProductModal({close,getProduct,productInfo,type}){
                         className='form-control'
                         onChange={handleChange}
                         value={productData.origin_price}
+                        min={0}
 
                       />
                     </label>
@@ -210,7 +210,7 @@ export default function ProductModal({close,getProduct,productInfo,type}){
                         className='form-control'
                         onChange={handleChange}
                         value={productData.price}
-
+                        min={0}
                       />
                     </label>
                   </div>

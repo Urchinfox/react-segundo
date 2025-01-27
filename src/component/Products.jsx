@@ -22,7 +22,6 @@ export default function Products(){
       try {
         const res = await axios.get(`/v2/api/${import.meta.env.VITE_APP_API_PATH}/admin/products`)
         setProducts(res.data.products)
-        console.log(res)
       } catch (error) {
         console.log(error)
       }
