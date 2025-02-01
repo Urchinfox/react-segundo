@@ -162,9 +162,9 @@ export default function ProductModal({close,getProduct,productInfo,type}){
                       />
                   </label>
                   {
-                    productData.imageUrl && productData.imagesUrl.map(item=>{
+                    productData.imagesUrl && productData.imagesUrl.map((item,index)=>{
                       return(
-                        <img src={item} alt="..." />
+                        <img src={item} alt="..." key={index} />
                       )
                     })
                   }

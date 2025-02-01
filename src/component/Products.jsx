@@ -109,7 +109,6 @@ export default function Products(){
     },[token])
 
     const logout = async() => {
-
         const path = window.location.pathname.includes('/react-segundo/') 
         ? '/react-segundo/' : '/';
 
@@ -130,7 +129,7 @@ export default function Products(){
             <DeleteModal close={closeDeleteModal} handleDelete={deleteProduct} id={productDetail?.id} txt={productDetail?.title}  />
 
           <div className="row mt-5">
-            <div className="col-md-6">
+            <div className="col-12">
               <h2>產品列表</h2>
               <table className="table align-middle">
                 <thead>
@@ -145,10 +144,7 @@ export default function Products(){
                 <tbody>
                   {products.map((item) => (
                     <tr key={item.id}>
-                      <td>{item.title}<br /><button className="" 
-                          onClick={()=>{
-                            setProductDetail(item)
-                          }}>查看細節</button></td>
+                      <td>{item.title}<br /></td>
                       <td>{item.origin_price}</td>
                       <td>{item.price}</td>
                       <td>
@@ -214,7 +210,7 @@ export default function Products(){
             {Array.from({length:pageInfo?.total_pages}).map((_,index)=>{
               return(
 
-                <li className="page-item" onClick={()=>handlePage(index+1)}> 
+                <li className="page-item" key={index} onClick={()=>handlePage(index+1)}> 
                 <a className={`page-link ${pageInfo.current_page === index+1 ? 'active' : 'none'}`} >
                   {index+1}
                 </a>
