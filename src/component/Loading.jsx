@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ClimbingBoxLoader from "react-spinners/ClimbingBoxLoader";
+import PacmanLoader from "react-spinners/PacmanLoader";
 
 function Loading({isLoading}) {
   const [loading, setLoading] = useState(false);
@@ -24,7 +24,7 @@ function Loading({isLoading}) {
             
             }}>
               <div style={{ marginTop: "20px" }}>
-                <ClimbingBoxLoader color={color}  size={15} />
+                <PacmanLoader color={color}  size={15} />
               </div>
             </div>
         )}

@@ -3,6 +3,8 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import Input from "../component/Input";
 import Loading from "../component/Loading";
+import { Link } from "react-router-dom";
+import Pagination from "../component/Pagination";
 
 export default function Product() {
   const [products, setProducts] = useState([]);
@@ -10,6 +12,9 @@ export default function Product() {
   const [TotalPrice, setTotalPrice] = useState();
   const [isLoading,setIsloading] = useState(false)
   const [cartLoadingState,setCartLoadingState] = useState([]);
+  const [pageInfo,setPageInfo] = useState();
+
+
 
     const {
       register,
@@ -58,11 +63,13 @@ export default function Product() {
 
 
 
-  const getProduct = async() =>{
+  const getProduct = async(page=1) =>{
     setIsloading(true)
     try {
-      const res = await axios.get(`/v2/api/${import.meta.env.VITE_APP_API_PATH}/products`)
+      const res = await axios.get(`/v2/api/${import.meta.env.VITE_APP_API_PATH}/products?page=${page}`)
       setProducts(res.data.products)
+      setPageInfo(res.data.pagination)
+
     } catch (error) {
       console.log(error)
     }finally{
@@ -73,7 +80,6 @@ export default function Product() {
   const getCartItem = async() =>{
     try {
       const res = await axios.get(`/v2/api/${import.meta.env.VITE_APP_API_PATH}/cart`)
-      console.log('getallcartitem',res)
       setCartItem(res.data.data.carts)
       setTotalPrice(res.data.data.final_total)
    
@@ -103,12 +109,15 @@ export default function Product() {
         "qty": qty
       }
     }
+    setIsloading(true)
     try {
       const res = await axios.put(`/v2/api/${import.meta.env.VITE_APP_API_PATH}/cart/${cartId}`,data)
       console.log('qtychange',res)
       getCartItem()
     } catch (error) {
       console.log(error)
+    }finally{
+      setIsloading(false)
     }
   }
 
@@ -137,18 +146,34 @@ export default function Product() {
     }
   }
 
+  const deleteCartItem = async(id) =>{
+    setIsloading(true)
+    try {
+      const res = await axios.delete(`/v2/api/${import.meta.env.VITE_APP_API_PATH}/cart/${id}`)
+      getCartItem()
+    } catch (error) {
+      console.log(error)
+    }finally{
+      setIsloading(false)
+    }
+  }
+
   useEffect(()=>{
     getProduct();
     getCartItem();
   },[])
+
+  const handlePage = (page) =>{
+    getProduct(page)
+  }
+
+ 
 
 
   return (<>
     <div className="container">
       <Loading isLoading={isLoading} />
       <div className="mt-4">
-        {/* 產品Modal */}
-        {/* 產品Modal */}
         <table className="table align-middle">
           <thead>
             <tr>
@@ -173,10 +198,10 @@ export default function Product() {
                     </td>
                     <td>
                       <div className="btn-group btn-group-sm">
-                        <button type="button" className="btn btn-outline-secondary">
+                        <Link to={`/product/${item.id}`} className="btn btn-outline-secondary">
                           <i className="fas fa-spinner fa-pulse"></i>
                           查看更多
-                        </button>
+                        </Link>
                         <button 
                           type="button" 
                           className="btn btn-outline-danger" 
@@ -186,7 +211,7 @@ export default function Product() {
                           <i className="fas fa-spinner fa-pulse"></i> 
                           加到購物車
                           {
-                            cartLoadingState.includes(item.id) && <span class="spinner-border spinner-border-sm" role="status" ></span> 
+                            cartLoadingState.includes(item.id) && <span className="spinner-border spinner-border-sm" role="status" ></span> 
                           }
                         </button>
                         
@@ -199,47 +224,75 @@ export default function Product() {
  
           </tbody>
         </table>
-        <div className="text-end">
-          <button className="btn btn-outline-danger" type="button" onClick={deleteAllCart}>清空購物車</button>
-        </div>
-        <table className="table align-middle">
-          <thead>
-            <tr>
-              <th></th>
-              <th>品名</th>
-              <th style={{ width: '150px' }}>數量</th>
-              <th>單價</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              cartItem.map((item)=>{
-                return(
-                  <tr key={item.product_id}>
+          <Pagination handlePage={handlePage} pageInfo={pageInfo}/>
+
+        {cartItem.length === 0 ? (
+          <div className="text-center">購物車尚無商品</div>
+        ) : (
+          <>
+            <div className="text-end">
+              <button className="btn btn-outline-danger" type="button" onClick={deleteAllCart}>
+                清空購物車
+              </button>
+            </div>
+
+            <table className="table align-middle">
+              <thead>
+                <tr>
                   <th></th>
-                  <th>{item.product.title}</th>
-                    <th style={{ width: '150px' }}>
-                      <button type="button" className="btn-sm btn border-1 border" onClick={()=>handleCartQty(item.product_id,item.qty-1,item.id)}>-</button>
-                      {item.qty}
-                      <button className="btn-sm btn border-1 border" type="button" onClick={()=>handleCartQty(item.product_id,item.qty+1,item.id)}>+</button>
-                      </th>
-                  <th>{Number(item.product.price * item.qty)}</th>
+                  <th>品名</th>
+                  <th style={{ width: "150px" }}>數量</th>
+                  <th>單價</th>
                 </tr>
-                )
-              })
-            }
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colSpan="3" className="text-end text-success">折扣價:0</td>
-              <td className="text-end text-success"></td>
-            </tr>
-            <tr>
-              <td colSpan="3" className="text-end">總價：{TotalPrice}</td>
-              <td className="text-end"></td>
-            </tr>
-          </tfoot>
-        </table>
+              </thead>
+              <tbody>
+                {cartItem.map((item) => (
+                  <tr key={item.product_id}>
+                    <th>
+                      <button className="btn btn-sm btn-primary" onClick={() => deleteCartItem(item.id)}>
+                        X
+                      </button>
+                    </th>
+                    <th>{item.product.title}</th>
+                    <th style={{ width: "150px" }}>
+                      <button
+                        type="button"
+                        className="btn-sm btn border-1 border"
+                        onClick={() => handleCartQty(item.product_id, item.qty - 1, item.id)}
+                      >
+                        -
+                      </button>
+                      {item.qty}
+                      <button
+                        className="btn-sm btn border-1 border"
+                        type="button"
+                        onClick={() => handleCartQty(item.product_id, item.qty + 1, item.id)}
+                      >
+                        +
+                      </button>
+                    </th>
+                    <th>{Number(item.product.price * item.qty)}</th>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colSpan={3} className="text-end text-success">
+                    折扣價: 0
+                  </td>
+                  <td className="text-end text-success"></td>
+                </tr>
+                <tr>
+                  <td colSpan={3} className="text-end">
+                    總價：{TotalPrice || 0}
+                  </td>
+                  <td className="text-end"></td>
+                </tr>
+              </tfoot>
+            </table>
+          </>
+        )}
+
       </div>
 
       <div className="my-5 row justify-content-center">

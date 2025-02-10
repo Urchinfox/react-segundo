@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Modal } from "bootstrap";
 import ProductModal from "./ProductModal";
 import DeleteModal from "./DeleteModal";
+import Pagination from "./Pagination";
 
 export default function Products(){
     const navigate = useNavigate();
@@ -13,6 +14,7 @@ export default function Products(){
     const [type, setType] = useState();
     const deleteBtnModal = useRef(null)
     const [pageInfo,setPageInfo] = useState();
+
     
     const productBtnModal = useRef(null)
 
@@ -24,7 +26,6 @@ export default function Products(){
         const res = await axios.get(`/v2/api/${import.meta.env.VITE_APP_API_PATH}/admin/products?page=${page}`)
         setProducts(res.data.products)
         setPageInfo(res.data.pagination)
-        console.log(res)
       } catch (error) {
         console.log(error)
       }
@@ -71,6 +72,8 @@ export default function Products(){
     const handlePage = (page) =>{
       getProduct(page)
     }
+
+
 
 
 
@@ -160,74 +163,9 @@ export default function Products(){
                 </tbody>
               </table>
             </div>
-            {/* <div className="col-md-6">
-              <h2>單一產品細節</h2>
-              {productDetail ? (
-                <div className="card mb-3">
-                  <img src={productDetail.imageUrl} className="card-img-top primary-image" alt="主圖" />
-                  <div className="card-body">
-                    <h5 className="card-title">
-                      {productDetail.title}
-                      <span className="badge bg-primary ms-2">{}</span>
-                    </h5>
-                    <p className="card-text">商品描述：{productDetail.description}</p>
-                    <p className="card-text">商品內容：{productDetail.content}</p>
-                    <div className="d-flex">
-                      <p className="card-text text-secondary"><del>{productDetail.origin_price}</del></p>元 / {productDetail.price}
-                    </div>
-                  
-                    <h5 className="mt-3">更多圖片：</h5>
-                    <div className="d-flex flex-wrap">
-                    {
-                      Array.isArray(productDetail.imagesUrl) && productDetail.imagesUrl.length > 0 ? (
-                      productDetail.imagesUrl.map((url, index) => (
-                      <img src={url} key={index} className="images" />
-                      ))
-                     ) : (<p className="text-secondary">沒有更多圖片</p>)
-                     
-                     }
-                     
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <p className="text-secondary">請選擇一個商品查看</p>
-              )}
-            </div> */}
+
           </div>
-
-          <div className="d-flex">
-
-          <nav>
-          <ul className="pagination">
-            <li className="page-item" onClick={()=>handlePage(pageInfo.current_page - 1)}>
-              <a className={`page-link ${!pageInfo?.has_pre ? 'disabled': 'none'}`} >
-                上一頁
-              </a>
-            </li>
-
-
-            {Array.from({length:pageInfo?.total_pages}).map((_,index)=>{
-              return(
-
-                <li className="page-item" key={index} onClick={()=>handlePage(index+1)}> 
-                <a className={`page-link ${pageInfo.current_page === index+1 ? 'active' : 'none'}`} >
-                  {index+1}
-                </a>
-              </li>
-
-              )
-            })}
-
-
-            <li className="page-item" onClick={()=>handlePage(pageInfo.current_page+1)}>
-              <a className={`page-link ${!pageInfo?.has_next? 'disabled':'none'}`}>
-                下一頁
-              </a>
-            </li>
-          </ul>
-          </nav>
-          </div>
+          <Pagination pageInfo={pageInfo} handlePage={handlePage} />
         </div>
 
       </>);

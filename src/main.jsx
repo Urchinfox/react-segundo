@@ -10,8 +10,6 @@ axios.defaults.baseURL=import.meta.env.VITE_APP_API_URL;
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <HashRouter>
       <App />
-    </HashRouter>
   </StrictMode>,
 )
