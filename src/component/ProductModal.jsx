@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react"
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { createAsyncMessage } from "../slices/messageSlice";
 
 export default function ProductModal({close,getProduct,productInfo,type}){
+
+    const dispatch = useDispatch();
 
     const [productData,setProductData] = useState(
         {
@@ -86,8 +90,8 @@ export default function ProductModal({close,getProduct,productInfo,type}){
                 method = 'put'
                 api = `/v2/api/${import.meta.env.VITE_APP_API_PATH}/admin/product/${id}`
             }
-        
             const res = await axios[method](api,data);
+            dispatch(createAsyncMessage(res.data))
             console.log(res);
             resetForm();
             close();

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react"
 import axios from "axios";
 import { useForm } from "react-hook-form";
-import Input from "../component/Input";
-import Loading from "../component/Loading";
+import Input from "../../component/Input";
+import Loading from "../../component/Loading";
 import { Link } from "react-router-dom";
-import Pagination from "../component/Pagination";
+import Pagination from "../../component/Pagination";
+import { useDispatch } from "react-redux";
+import { createAsyncMessage } from "../../slices/messageSlice";
 
 export default function Product() {
   const [products, setProducts] = useState([]);
@@ -13,6 +15,7 @@ export default function Product() {
   const [isLoading,setIsloading] = useState(false)
   const [cartLoadingState,setCartLoadingState] = useState([]);
   const [pageInfo,setPageInfo] = useState();
+  const dispatch = useDispatch();
 
 
 
@@ -50,8 +53,8 @@ export default function Product() {
         const res = await axios.post(`/v2/api/${import.meta.env.VITE_APP_API_PATH}/order`,orderData);
         console.log(res,"success order")
         getCartItem();
+        dispatch(createAsyncMessage(res.data))
         reset();
-        alert('已建立訂單')
         
       } catch (error) {
         console.log(error)
@@ -91,8 +94,8 @@ export default function Product() {
   const deleteAllCart = async() =>{
     try {
       const res = await axios.delete(`/v2/api/${import.meta.env.VITE_APP_API_PATH}/carts`);
+      dispatch(createAsyncMessage(res.data))
       getCartItem()
-      console.log('deleteallcart',res)
     } catch (error) {
       console.log(error)
     }
@@ -112,7 +115,7 @@ export default function Product() {
     setIsloading(true)
     try {
       const res = await axios.put(`/v2/api/${import.meta.env.VITE_APP_API_PATH}/cart/${cartId}`,data)
-      console.log('qtychange',res)
+      dispatch(createAsyncMessage(res.data))
       getCartItem()
     } catch (error) {
       console.log(error)
@@ -133,7 +136,7 @@ export default function Product() {
     })
     try {
       const res = await axios.post(`/v2/api/${import.meta.env.VITE_APP_API_PATH}/cart`,data)
-      console.log('addcartitem',res)
+      dispatch(createAsyncMessage(res.data))
       getCartItem()
 
       
@@ -150,6 +153,7 @@ export default function Product() {
     setIsloading(true)
     try {
       const res = await axios.delete(`/v2/api/${import.meta.env.VITE_APP_API_PATH}/cart/${id}`)
+      dispatch(createAsyncMessage(res.data))
       getCartItem()
     } catch (error) {
       console.log(error)
@@ -371,7 +375,7 @@ export default function Product() {
             <textarea id="message" className="form-control" cols="30" rows="10"{...register('comments')} ></textarea>
           </div>
           <div className="text-end">
-            <button type="submit" className="btn btn-danger">送出訂單</button>
+            <button type="submit" className="btn btn-danger" disabled={cartItem.length === 0}>送出訂單</button>
           </div>
         </form>
       </div>

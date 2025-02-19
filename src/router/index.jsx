@@ -1,10 +1,10 @@
 import { createHashRouter, RouterProvider } from "react-router-dom"
-import FrontLayout from "../pages/FrontLayout"
-import Home from "../pages/Home"
-import Product from "../pages/Product"
-import Login from '../component/Login'
-import Products from '../component/Products'
-import ProductInfo from "../pages/ProductInfo"
+import FrontLayout from "../pages/frontpage/FrontLayout"
+import Home from "../pages/frontpage/Home"
+import Product from '../pages/frontpage/Product'
+import Login from '../pages/admin/Login'
+import Products from '../pages/admin/Products'
+import ProductInfo from "../pages/frontpage/ProductInfo"
 
 const routes = createHashRouter([
     {

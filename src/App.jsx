@@ -1,13 +1,14 @@
+import { Provider } from 'react-redux';
 import './assets/all.scss';
 import AppRouter from './router';
-
+import { store } from './store/messageStore';
 function App() {
 
 
   return (
-    <>
-    <AppRouter/>
-    </>
+    <Provider store={store}>
+      <AppRouter/>
+    </Provider>
   )
 }
 

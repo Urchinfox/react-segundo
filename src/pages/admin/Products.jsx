@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import '../assets/utilities/products.scss'
+import '../../assets/utilities/products.scss'
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Modal } from "bootstrap";
-import ProductModal from "./ProductModal";
-import DeleteModal from "./DeleteModal";
-import Pagination from "./Pagination";
+import ProductModal from '../../component/ProductModal'
+import DeleteModal from "../../component/DeleteModal";
+import Pagination from "../../component/Pagination";
+import Message from "../../component/messageToast";
+import { useDispatch } from "react-redux";
+import { createAsyncMessage } from "../../slices/messageSlice";
 
 export default function Products(){
     const navigate = useNavigate();
@@ -14,9 +17,8 @@ export default function Products(){
     const [type, setType] = useState();
     const deleteBtnModal = useRef(null)
     const [pageInfo,setPageInfo] = useState();
-
-    
     const productBtnModal = useRef(null)
+    const dispatch = useDispatch();
 
 
 
@@ -36,6 +38,8 @@ export default function Products(){
         const res = await axios.delete(`/v2/api/${import.meta.env.VITE_APP_API_PATH}/admin/product/${id}`)
         closeDeleteModal()
         getProduct()
+        dispatch(createAsyncMessage(res.data))
+        
       } catch (error) {
         console.log(error)
       }
@@ -124,6 +128,7 @@ export default function Products(){
        return (<>
 
         <div className="container">
+          <Message />
             <button type="button" className="btn btn-primary" onClick={checkLoginState}>驗證登入</button>
             <button type="button" className="btn btn-primary" onClick={logout}>登出</button>
             <button type="button" className="btn btn-primary" onClick={()=>openModal('create')}>建立商品</button>
